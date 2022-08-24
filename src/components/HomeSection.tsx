@@ -1,23 +1,42 @@
 import { Box, Button, HStack, Text, VStack } from "@chakra-ui/react";
 import { ChangeEvent, useContext, useRef } from "react";
-import { v4 as uuidv4 } from 'uuid';
+import { useDropzone } from "react-dropzone";
+import { v4 as uuidv4 } from "uuid";
 import { ImageListContext } from "../contexts/ImageListcontext";
 import { buttonBgColor, greyShade } from "../utils/colors";
 import ImagesContainer from "./ImagesContainer";
-
 
 type Props = {};
 
 const HomeSection = (props: Props) => {
   const inputRef = useRef<HTMLInputElement>(null);
-  const imageDataContext = useContext(ImageListContext)
+  const imageDataContext = useContext(ImageListContext);
   const multipleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       Array.from(e.target.files).forEach((file) =>
-        imageDataContext.pushImageData( { id: uuidv4(), file: file, title: file.name, isUploaded: false })
-      );    }
-      
+        imageDataContext.pushImageData({
+          id: uuidv4(),
+          file: file,
+          title: file.name,
+          isUploaded: false,
+        })
+      );
+    }
   };
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    accept: { "image/*": [".png", ".jpg", ".jpeg"] },
+    onDrop:(files) => {
+        Array.from(files).forEach((file) =>
+        imageDataContext.pushImageData({
+          id: uuidv4(),
+          file: file,
+          title: file.name,
+          isUploaded: false,
+        })
+      );
+    }
+  });
 
   return (
     <Box display="flex" flexDir="column" height="calc(100vh)">
@@ -31,11 +50,12 @@ const HomeSection = (props: Props) => {
         alignItems="center"
         bgColor={greyShade}
       >
-        <Box w="calc(70%)">
-          <HStack justifyContent="space-between">
-            <VStack alignItems="start">
+        <Box w="calc(70%)" {...getRootProps()}>
+        <input {...getInputProps()} />
+          <HStack justifyContent="space-between"   >
+            <VStack alignItems="start"  >
               <Text letterSpacing="widest" fontWeight="bold" fontSize="3xl">
-                DROP ME
+               {!isDragActive ? "DROP ME" : "DROP FILE HERE ..........." } 
               </Text>
               <Text>Drag and Drop files to upload</Text>
             </VStack>
@@ -50,6 +70,7 @@ const HomeSection = (props: Props) => {
             />
 
             <Button
+                m={{base: "16", lg: "1"}}
               bgColor={buttonBgColor}
               onClick={() => inputRef.current?.click()}
               fontWeight="normal"
@@ -61,7 +82,7 @@ const HomeSection = (props: Props) => {
       </Box>
 
       <Box display="flex" p="10" flex={1} bgColor="black">
-      <ImagesContainer />
+        <ImagesContainer />
       </Box>
       <Box
         pos="fixed"
