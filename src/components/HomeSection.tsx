@@ -50,12 +50,13 @@ const HomeSection = (props: Props) => {
         alignItems="center"
         bgColor={greyShade}
       >
-        <Box w="calc(70%)" {...getRootProps()}>
-        <input {...getInputProps()} />
+        <Box w="calc(70%)" >
           <HStack justifyContent="space-between"   >
-            <VStack alignItems="start"  >
+            <VStack alignItems="start"  {...getRootProps()}>
+            <input {...getInputProps()} />
+
               <Text letterSpacing="widest" fontWeight="bold" fontSize="3xl">
-               {!isDragActive ? "DROP ME" : "DROP FILE HERE ..........." } 
+               {!isDragActive ? "DROP FILE HERE" : "DROP ME HERE..........." } 
               </Text>
               <Text>Drag and Drop files to upload</Text>
             </VStack>
