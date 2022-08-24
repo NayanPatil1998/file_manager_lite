@@ -1,12 +1,13 @@
-import { Box, Flex, VStack } from "@chakra-ui/react";
-
+import { Box } from "@chakra-ui/react";
+import "./app.css";
+import HomeSection from "./components/HomeSection";
 function App() {
   return (
-  <Box height="calc(100vh)">
-      
-  </Box>
-  
+    <Box  fontFamily="Rubik">
+     <HomeSection />
+    </Box>
   );
 }
 
 export default App;
+
