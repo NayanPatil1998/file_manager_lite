@@ -24,20 +24,22 @@ const ImageCard = (props: Props) => {
   const { imageData } = props;
   const [progress, setProgress] = useState(0);
   const [mounted, setMounted] = useState(true);
-  const imageListContext = useContext(ImageListContext)
+  const imageListContext = useContext(ImageListContext);
 
-  
   useEffect(() => {
     if (!imageData.isUploaded && mounted) {
       uploadImage();
       setMounted(false);
     }
+
+    return () => {
+        imageListContext.syncLocalStorage()
+    }
   }, [imageData, mounted]);
 
   const fileOptions: AxiosRequestConfig = {
     withCredentials: false,
-    headers: { "content-type": "multipart/form-data" },
-    
+    headers: {},
     onUploadProgress: (progressEvent) => {
       const { loaded, total } = progressEvent;
       const percentage = Math.floor(((loaded / 1000) * 100) / (total / 1000));
@@ -46,15 +48,17 @@ const ImageCard = (props: Props) => {
   };
 
   const uploadImage = async () => {
-    
     const data = new FormData();
     data.append("file", imageData.file);
     data.append("upload_preset", "testtest");
-    data.append("cloud_name", "dplwazmlj");
 
-    const response = await FileUpload(imageData.file, fileOptions);
-    if(response.status === 200) {
-        imageListContext.updateImageStatus({...imageData, isUploaded: true, URL: response.data.url})
+    const response = await FileUpload(data, fileOptions);
+    if (response.status === 200) {
+      imageListContext.updateImageStatus({
+        ...imageData,
+        isUploaded: true,
+        URL: response.data.url,
+      });
     }
 
   };
@@ -73,7 +77,13 @@ const ImageCard = (props: Props) => {
       <Box height="40" width="60">
         {!imageData.isUploaded ? (
           <Box alignItems="center" justifyContent="center" w="full" h="full">
-            <Progress mt="20" mx="5" borderRadius="2xl" size="lg" value={progress}>
+            <Progress
+              mt="20"
+              mx="5"
+              borderRadius="2xl"
+              size="lg"
+              value={progress}
+            >
               <ProgressLabel>
                 <Text fontSize={12}>{progress}%</Text>
               </ProgressLabel>
@@ -92,7 +102,7 @@ const ImageCard = (props: Props) => {
       <Text alignSelf="start" px="2" py="2">
         {props.imageData.title}
       </Text>
-      <ImageModal isOpen={isOpen} onClose={onClose} />
+      <ImageModal id={imageData.id} isOpen={isOpen} onClose={onClose} />
     </VStack>
   );
 };

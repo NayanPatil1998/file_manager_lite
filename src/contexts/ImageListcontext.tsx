@@ -25,7 +25,8 @@ const ImageListProvider: FC<Props> = ({ children }) => {
 
   useEffect(() => {
     console.log(getItems());
-  }, []);
+    syncLocalStorage(filesData);
+  }, [filesData]);
 
   const updateImageStatus = (imageData: ImageType) => {
     const fileIndex = filesData.findIndex((value) => value.id === imageData.id);
@@ -37,6 +38,7 @@ const ImageListProvider: FC<Props> = ({ children }) => {
         return file;
       })
     );
+
   };
 
   const syncLocalStorageData = () => {

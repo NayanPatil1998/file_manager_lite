@@ -1,26 +1,37 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import {
-    Box,
-    Button,
-    HStack,
-    Image,
-    Modal,
-    ModalBody,
-    ModalCloseButton,
-    ModalContent,
-    ModalFooter,
-    ModalOverlay,
-    Text
+  Box,
+  Button,
+  HStack,
+  Image,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalOverlay,
+  Text
 } from "@chakra-ui/react";
-import { FC } from "react";
+import { FC, useContext, useEffect, useState } from "react";
+import { ImageListContext } from "../contexts/ImageListcontext";
 import { greyShade } from "../utils/colors";
 
 type Props = {
   isOpen: boolean;
   onClose: VoidFunction;
+  id: string;
 };
 
-const ImageModal: FC<Props> = ({ isOpen, onClose }) => {
+const ImageModal: FC<Props> = ({ isOpen, onClose, id }) => {
+  const [index, setIndex] = useState(0);
+
+  const { filesData } = useContext(ImageListContext);
+
+  useEffect(() => {
+    const fileIndex = filesData.findIndex((value) => value.id === id);
+    setIndex(fileIndex);
+  }, []);
+
   return (
     <>
       <Modal isOpen={isOpen} size="2xl" onClose={onClose}>
@@ -39,7 +50,7 @@ const ImageModal: FC<Props> = ({ isOpen, onClose }) => {
                   borderRadius="md"
                   boxSize="full"
                   objectFit="contain"
-                  src="https://bit.ly/dan-abramov"
+                  src={filesData[index].URL}
                   alt="Dan Abramov"
                 />
               </Box>
@@ -47,16 +58,27 @@ const ImageModal: FC<Props> = ({ isOpen, onClose }) => {
           </ModalBody>
           <HStack mx="2" color="white" justifyContent="space-between">
             <Text alignSelf="start" px="2" py="2">
-              Drag and Drop files to upload
+              {filesData[index].title}
             </Text>
             <HStack>
-              <Button bgColor={greyShade} w="4" h="6" >
+              <Button
+                bgColor={greyShade}
+                w="4"
+                h="6"
+                onClick={() => {
+                  if(index > 0)
+                  setIndex((i) => i - 1);
+                }}
+              >
                 <ChevronLeftIcon />
               </Button>
               <Text alignSelf="start" color={greyShade} px="2" py="2">
-                1/2 FILES
+                {index + 1}/{filesData.length} FILES
               </Text>
-              <Button bgColor={greyShade} w="4" h="6">
+              <Button bgColor={greyShade} w="4" h="6" onClick={() => {
+                  if(index < filesData.length - 1)
+                  setIndex((i) => i + 1);
+                }}>
                 <ChevronRightIcon />
               </Button>
             </HStack>

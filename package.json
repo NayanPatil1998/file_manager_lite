@@ -1,6 +1,9 @@
 {
   "name": "file_manager_lite",
   "version": "0.1.0",
+  "Host": {
+    "CORS": "*"
+  },
   "private": true,
   "dependencies": {
     "@chakra-ui/icons": "^2.0.8",
